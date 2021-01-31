@@ -1,11 +1,30 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { useContext, useRef } from "react";
+import { Link, useParams } from "react-router-dom";
+import { useContext, useRef, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
+import PropTypes from "prop-types";
 
-export const AddContact = () => {
+export const EditContact = ({ match }) => {
 	//Importando context
-	const { actions } = useContext(Context);
+	const { store, actions } = useContext(Context);
+
+	//Traer parámetro ID
+	const { id } = match.params;
+
+	//Armar state de Contacto
+	const [contact, setContact] = useState({
+		full_name: "",
+		email: "",
+		agenda_slug: "JoshuaBravo20",
+		address: "",
+		phone: ""
+	});
+
+	//Ejecutar al ejecutar esta función
+	useEffect(() => {
+		let c = !!store.agenda && store.agenda.find(item => item.id === id);
+		setContact(c);
+	}, []);
 
 	//Definiendo los refs
 	let fullNameRef = useRef(null);
@@ -16,7 +35,7 @@ export const AddContact = () => {
 	return (
 		<div className="container">
 			<div>
-				<h1 className="text-center mt-5">Add a new contact</h1>
+				<h1 className="text-center mt-5">Edit contact</h1>
 				<form>
 					<div className="form-group">
 						<label>Full Name</label>
@@ -24,6 +43,7 @@ export const AddContact = () => {
 							type="text"
 							className="form-control"
 							placeholder="Full Name"
+							defaultValue={contact.full_name}
 							ref={r => (fullNameRef = r)}
 						/>
 					</div>
@@ -33,6 +53,7 @@ export const AddContact = () => {
 							type="email"
 							className="form-control"
 							placeholder="Enter email"
+							defaultValue={contact.email}
 							ref={r => (emailRef = r)}
 						/>
 					</div>
@@ -42,6 +63,7 @@ export const AddContact = () => {
 							type="phone"
 							className="form-control"
 							placeholder="Enter phone"
+							defaultValue={contact.phone}
 							ref={r => (phoneRef = r)}
 						/>
 					</div>
@@ -51,15 +73,21 @@ export const AddContact = () => {
 							type="text"
 							className="form-control"
 							placeholder="Enter address"
+							defaultValue={contact.address}
 							ref={r => (addressRef = r)}
 						/>
 					</div>
 					<button
 						type="button"
 						className="btn btn-primary form-control"
-						to="/"
 						onClick={() => {
-							actions.addContactData(fullNameRef.value, emailRef.value, phoneRef.value, addressRef.value);
+							actions.editContactData(
+								fullNameRef.value,
+								emailRef.value,
+								phoneRef.value,
+								addressRef.value,
+								contact.id
+							);
 							fullNameRef.value = "";
 							emailRef.value = "";
 							phoneRef.value = "";
@@ -74,4 +102,8 @@ export const AddContact = () => {
 			</div>
 		</div>
 	);
+};
+
+EditContact.propTypes = {
+	match: PropTypes.object
 };
