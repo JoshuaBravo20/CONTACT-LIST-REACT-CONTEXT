@@ -44,7 +44,7 @@ const getState = ({ getStore, setStore, getActions }) => {
 					})
 					.catch(error => console.error(error));
 			},
-			editContactData: (fullName, email, address, phone, id) => {
+			editContactData: (fullName, email, phone, address, id) => {
 				let contact = {
 					full_name: fullName,
 					email: email,
